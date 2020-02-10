@@ -5,6 +5,8 @@ import os
 import time
 from threading import Thread
 
+import sys
+sys.path.append('/home/yfxing/ECCV/carla_0.9.6/PythonAPI/carla/dist/carla-0.9.6-py3.5-linux-x86_64.egg')
 import carla
 
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
@@ -268,7 +270,7 @@ class CallBack(object):
             self._parse_image_cb(data, self._tag)
         elif isinstance(data, carla.LidarMeasurement):
             self._parse_lidar_cb(data, self._tag)
-        elif isinstance(data, carla.GnssMeasurement):
+        elif isinstance(data, carla.GnssEvent):
             self._parse_gnss_cb(data, self._tag)
         elif isinstance(data, CANBusMeasurement) or isinstance(data, HDMapMeasurement) \
                 or isinstance(data, SceneLayoutMeasurement) or isinstance(data, ObjectMeasurements):

@@ -552,13 +552,19 @@ class OnSidewalkTest(Criterion):
         """
         Check lane invasion count
         """
+#         from pdb import set_trace as st
+#         st()
         new_status = py_trees.common.Status.RUNNING
 
         if self._terminate_on_failure and (self.test_status == "FAILURE"):
             new_status = py_trees.common.Status.FAILURE
-
+            
+#         CarlaDataProvider.on_carla_tick()
         # Some of the vehicle parameters
         current_tra = CarlaDataProvider.get_transform(self._actor)
+        
+        if current_tra == None:
+            return
         current_loc = current_tra.location
         current_wp = self._map.get_waypoint(current_loc, lane_type=carla.LaneType.Any)
 

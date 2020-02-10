@@ -1,8 +1,9 @@
 
 import time
-
+import os, sys
 from threading import Thread
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
+sys.path.append('/home/yfxing/ECCV/carla_0.9.6/PythonAPI/carla/')
 import scene_layout as scene_layout_parser  # This should come from CARLA path
 
 

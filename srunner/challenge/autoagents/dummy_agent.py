@@ -13,6 +13,8 @@ import carla
 
 from srunner.challenge.autoagents.autonomous_agent import AutonomousAgent, Track
 
+import h5py
+import numpy as np
 
 class DummyAgent(AutonomousAgent):
 
@@ -24,6 +26,7 @@ class DummyAgent(AutonomousAgent):
         """
         Setup the agent parameters
         """
+        print("SETTING UP")
         self.track = Track.ALL_SENSORS_HDMAP_WAYPOINTS
 
     def sensors(self):
@@ -63,21 +66,25 @@ class DummyAgent(AutonomousAgent):
         """
         Execute one step of navigation.
         """
+        print("SHOULD BE NAVIGATING")
         print("=====================>")
+#         file = h5py.File("/home/yfxing/ECCV/scenario_runner/sample.hdf5", "w")
         for key, val in input_data.items():
             if hasattr(val[1], 'shape'):
                 shape = val[1].shape
                 print("[{} -- {:06d}] with shape {}".format(key, val[0], shape))
+                file.create_dataset(key, data=val[1])
             else:
                 print("[{} -- {:06d}] ".format(key, val[0]))
         print("<=====================")
-
+#         file.close()
+#         exit()
         # DO SOMETHING SMART
 
         # RETURN CONTROL
         control = carla.VehicleControl()
-        control.steer = 0.0
-        control.throttle = 0.0
+        control.steer = 0.5
+        control.throttle = 1.0
         control.brake = 0.0
         control.hand_brake = False
 

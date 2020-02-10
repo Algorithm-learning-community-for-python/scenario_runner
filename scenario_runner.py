@@ -27,6 +27,7 @@ import sys
 import time
 import pkg_resources
 
+sys.path.append('/home/yfxing/ECCV/carla_0.9.6/PythonAPI/carla/dist/carla-0.9.6-py3.5-linux-x86_64.egg')
 import carla
 
 from srunner.challenge.autoagents.agent_wrapper import SensorConfigurationInvalid
@@ -99,9 +100,9 @@ class ScenarioRunner(object):
         self.client = carla.Client(args.host, int(args.port))
         self.client.set_timeout(self.client_timeout)
 
-        dist = pkg_resources.get_distribution("carla")
-        if LooseVersion(dist.version) < LooseVersion('0.9.6'):
-            raise ImportError("CARLA version 0.9.6 or newer required. CARLA version found: {}".format(dist))
+#         dist = pkg_resources.get_distribution("carla")
+#         if LooseVersion(dist.version) < LooseVersion('0.9.6'):
+#             raise ImportError("CARLA version 0.9.6 or newer required. CARLA version found: {}".format(dist))
 
         # Load additional scenario definitions, if there are any
         # If something goes wrong an exception will be thrown by importlib (ok here)

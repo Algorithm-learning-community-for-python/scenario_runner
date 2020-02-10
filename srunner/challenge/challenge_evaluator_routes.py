@@ -30,8 +30,10 @@ import xml.etree.ElementTree as ET
 
 import py_trees
 
+sys.path.append('/home/yfxing/ECCV/carla_0.9.6/PythonAPI/carla/dist/carla-0.9.6-py3.5-linux-x86_64.egg')
 import carla
 
+sys.path.append('/home/yfxing/ECCV/carla_0.9.6/PythonAPI/carla/')
 from agents.navigation.local_planner import RoadOption
 
 import srunner.challenge.utils.route_configuration_parser as parser
@@ -240,7 +242,8 @@ class ChallengeEvaluator(object):
         self.master_scenario = None
         self.background_scenario = None
         self.list_scenarios = []
-
+        
+        print("INSIDE CHALLENGER")
         # first we instantiate the Agent
         if args.agent is not None:
             module_name = os.path.basename(args.agent).split('.')[0]
@@ -615,18 +618,23 @@ class ChallengeEvaluator(object):
             return False
 
     def run_route(self, trajectory, no_master=False):
+        print("THE ROUTE RUNNING? :"+str(self.route_is_running()))
+        
         while no_master or self.route_is_running():
             # update all scenarios
             GameTime.on_carla_tick(self.timestamp)
             CarlaDataProvider.on_carla_tick()
             # update all scenarios
-
+            
+            
             ego_action = self.agent_instance()
+            print(ego_action)
             for scenario in self.list_scenarios:
                 scenario.scenario.scenario_tree.tick_once()
                 # The scenarios may change the control if it applies.
                 ego_action = scenario.change_control(ego_action)
-
+                
+                print("EGO ACTION: "+str(ego_action))
                 if self.debug > 1:
                     for actor in self.world.get_actors():
                         if 'vehicle' in actor.type_id or 'walker' in actor.type_id:
@@ -634,6 +642,7 @@ class ChallengeEvaluator(object):
 
             # ego vehicle acts
             self.ego_vehicle.apply_control(ego_action)
+            
             if self.spectator:
                 spectator = self.world.get_spectator()
                 ego_trans = self.ego_vehicle.get_transform()
@@ -1137,16 +1146,21 @@ class ChallengeEvaluator(object):
         sampled_scenarios_definitions = self.scenario_sampling(potential_scenarios_definitions)
 
         # create agent
+        print("CREATING AGENT...")
+        print("NAME IS "+str(self.module_agent.__name__.title().replace('_', '')))
         agent_class_name = self.module_agent.__name__.title().replace('_', '')
         self.agent_instance = getattr(self.module_agent, agent_class_name)(args.config)
+        print(self.agent_instance)
         correct_sensors, error_message = self.valid_sensors_configuration(self.agent_instance, self.track)
-
+        
+#         print("self.debug is: "+str(self.debug))
         if not correct_sensors:
             # the sensor configuration is illegal
             self.record_fatal_error(error_message)
             self._system_error = True
             sys.exit(-1)
-
+           
+        print("HERE?")
         self.agent_instance.set_global_plan(gps_route, _route_description['trajectory'])
         # prepare the ego car to run the route.
         # It starts on the first wp of the route
@@ -1167,6 +1181,7 @@ class ChallengeEvaluator(object):
                                                                        timeout=route_timeout)
 
         self.list_scenarios = [self.master_scenario, self.background_scenario, self.traffic_light_scenario]
+        print("HERE??")
         # build the instance based on the parsed definitions.
         if self.debug > 0:
             for scenario in sampled_scenarios_definitions:
@@ -1178,18 +1193,26 @@ class ChallengeEvaluator(object):
                                              color=carla.Color(0, 0, 255), life_time=100000, persistent_lines=True)
 
                 print(scenario)
-
+                
+        print("HERE???")
         self.list_scenarios += self.build_scenario_instances(sampled_scenarios_definitions,
                                                              _route_description['town_name'],
                                                              timeout=route_timeout)
 
         # Tick once to start the scenarios.
+#         self.debug=20
         if self.debug > 0:
             print(" Running these scenarios  --- ", self.list_scenarios)
-
+        
+        print("HERE????")
         for scenario in self.list_scenarios:
+#             from pdb import set_trace as st
+#             st()
             scenario.scenario.scenario_tree.tick_once()
-
+            
+            print("????")
+            
+        print("ARE WE HERE?")
         # main loop!
         self.run_route(_route_description['trajectory'])
 
@@ -1215,7 +1238,8 @@ class ChallengeEvaluator(object):
         # setup world and client assuming that the CARLA server is up and running
         client = carla.Client(args.host, int(args.port))
         client.set_timeout(self.client_timeout)
-
+        
+        print("CARLA CLIENT SET UP")
         for route_idx, route_description in enumerate(route_descriptions_list):
             for repetition in range(self.repetitions):
                 # check if we have enough wall time to run this specific route
@@ -1236,7 +1260,6 @@ class ChallengeEvaluator(object):
                     self.load_world(client, route_description['town_name'])
                     # set weather profile
                     self.set_weather_profile(repetition)
-
                     # Set the actor pool so the scenarios can prepare themselves when needed
                     CarlaActorPool.set_client(client)
                     CarlaActorPool.set_world(self.world)
@@ -1255,9 +1278,11 @@ class ChallengeEvaluator(object):
 
                 # Try to run the route
                 # If something goes wrong, still take the current score, and continue
+                
                 try:
                     self._current_route_broke = False
                     self.load_environment_and_run(args, world_annotations, route_description)
+                    
                 except Exception as e:
                     if self.debug > 0:
                         traceback.print_exc()
@@ -1295,7 +1320,7 @@ class ChallengeEvaluator(object):
                 self.background_scenario = None
 
                 self.world.tick()
-
+                print("EVERY TICK")
                 if self.debug > 0:
                     break
 
@@ -1354,8 +1379,11 @@ if __name__ == '__main__':
 
     try:
         challenge_evaluator = ChallengeEvaluator(ARGUMENTS)
+        print(11)
         challenge_evaluator.run(ARGUMENTS)
+        print(22)
     except Exception as e:
+        print(33)
         traceback.print_exc()
         if challenge_evaluator:
             challenge_evaluator.report_challenge_statistics(ARGUMENTS.filename, ARGUMENTS.show_to_participant)
