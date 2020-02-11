@@ -36,6 +36,7 @@ import carla
 sys.path.append('/home/yfxing/ECCV/carla_0.9.6/PythonAPI/carla/')
 from agents.navigation.local_planner import RoadOption
 
+sys.path.append('/home/yfxing/ECCV/scenario_runner/')
 import srunner.challenge.utils.route_configuration_parser as parser
 from srunner.challenge.envs.scene_layout_sensors import SceneLayoutReader, ObjectFinder
 from srunner.challenge.envs.sensor_interface import CallBack, CANBusSensor, HDMapReader
@@ -1206,11 +1207,8 @@ class ChallengeEvaluator(object):
         
         print("HERE????")
         for scenario in self.list_scenarios:
-#             from pdb import set_trace as st
-#             st()
             scenario.scenario.scenario_tree.tick_once()
-            
-            print("????")
+           
             
         print("ARE WE HERE?")
         # main loop!

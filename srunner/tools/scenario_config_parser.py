@@ -92,7 +92,9 @@ class ScenarioConfigurationParser(object):
 
         list_of_config_files = glob.glob("{}/srunner/examples/*.xml".format(os.getenv('ROOT_SCENARIO_RUNNER', "./")))
         list_of_config_files += glob.glob("{}/srunner/examples/*.xosc".format(os.getenv('ROOT_SCENARIO_RUNNER', "./")))
-
+        
+        from pdb import set_trace as st
+        st()
         if config_file_name != '':
             list_of_config_files.append(config_file_name)
 

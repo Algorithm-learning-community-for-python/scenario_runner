@@ -399,7 +399,9 @@ class ScenarioRunner(object):
 
             # Load the scenario configurations provided in the config file
             scenario_configurations = None
+            
             scenario_config_file = ScenarioConfigurationParser.find_scenario_config(args.scenario, args.configFile)
+            
             if scenario_config_file is None:
                 print("Configuration for scenario {} cannot be found!".format(args.scenario))
                 continue

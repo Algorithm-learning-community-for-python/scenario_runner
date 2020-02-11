@@ -66,14 +66,17 @@ class DummyAgent(AutonomousAgent):
         """
         Execute one step of navigation.
         """
-        print("SHOULD BE NAVIGATING")
+#         print("SHOULD BE NAVIGATING")
         print("=====================>")
 #         file = h5py.File("/home/yfxing/ECCV/scenario_runner/sample.hdf5", "w")
+#         print(input_data)
+#         from pdb import set_trace as st
+#         st()
         for key, val in input_data.items():
             if hasattr(val[1], 'shape'):
                 shape = val[1].shape
                 print("[{} -- {:06d}] with shape {}".format(key, val[0], shape))
-                file.create_dataset(key, data=val[1])
+#                 file.create_dataset(key, data=val[1])
             else:
                 print("[{} -- {:06d}] ".format(key, val[0]))
         print("<=====================")
